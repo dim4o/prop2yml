@@ -1,0 +1,43 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: PlanIt
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
+
+server:
+  port: 8080
+
+version: '0.0.1'
+
+app:
+  message: This is the primary app prop for ${spring.application.name}
+  version: ${version}
+  profile: ${spring.profiles.active}
+
+custom:
+  message: Ivan
+
+jwt:
+  signing:
+    key:
+      #This is the secret KEY
+      secret: mySecret
+  get:
+    token:
+      uri: /authenticate
+  refresh:
+    token:
+      uri: /refresh
+  http:
+    request:
+      header: Authorization
+  token:
+    expiration:
+      in:
+        #Expiration - about a week
+        seconds: 604800
+
