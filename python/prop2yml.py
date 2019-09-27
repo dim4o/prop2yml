@@ -53,6 +53,16 @@ def convert_properties_to_yml_file(in_file_path, out_file_path):
 
 
 if __name__ == "__main__":
-    prop_pref = './resources/properties/'
-    yml_pref = './resources/yml/'
-    convert_properties_to_yml_file(prop_pref + 'application_1.properties', yml_pref + "test.yml")
+    import os
+    import argparse
+
+    parser = argparse.ArgumentParser(description=".properties to .yml")
+    parser.add_argument("prop_path", help="Path to the properties file.", type=str)
+    parser.add_argument("yml_path", nargs='?', help="Path to the yml file.", type=str, default=None)
+    args = parser.parse_args()
+
+    yml_path = args.yml_path
+    if not yml_path:
+        yml_path = os.getcwd() + "/" + os.path.splitext(args.prop_path)[0] + ".yml"
+    print('Converting: source="{}", destination="{}"'.format(args.prop_path, yml_path))
+    convert_properties_to_yml_file(in_file_path=args.prop_path, out_file_path=yml_path)

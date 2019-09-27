@@ -22,4 +22,7 @@ Converting files by hand is boring. This tool helps to to migrate from `.propert
     `python yml2prop.py <source_file_path.yml> <destination_path.properties>`
 
     If the destination path is not specified the converted file will be saved in the current working directory with name: `<source_file_name>.properties`. 
+
+Use `-h` or `--help` option to show a help message and exit.
+
 ## Java guide
