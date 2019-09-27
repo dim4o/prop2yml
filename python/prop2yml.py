@@ -50,38 +50,41 @@ class PropertiesTrie(object):
         result = not (end_of_word ^ hole_word)
         return result
 
-    def trie_to_yml(self):
-        def convert_to_yml(start_node, start_key, level=-1):
-            result = ""
-            if level >= 0:
+    def to_yml(self):
+        """ Converts the properties tree to yml format
+        :return: yml format as a string
+        """
+        def helper(start_node, start_key, depth=-1):
+            yml = ""
+            if start_key:
                 val = "" if not start_node.value else " " + str(start_node.value)
-                result = "\t" * level + start_key + ":" + val + "\n"
+                yml = "\t" * depth + start_key + ":" + val + "\n"
 
             for start_key, _ in start_node.children.items():
-                result += convert_to_yml(start_node.children[start_key], start_key, level + 1)
+                yml += helper(start_node.children[start_key], start_key, depth + 1)
+            return yml
 
-            return result
-
-        k = list(self.root.children.keys())[0]
-        return convert_to_yml(start_node=self.root, start_key=k) + "\n\n"
+        return helper(start_node=self.root, start_key=None) + "\n\n"
 
 
-trie = PropertiesTrie()
-prop_dict = {}
-
-with open("./python/resources/properties/application_1.properties", "r") as file:
-    for line in file:
-        if line.strip() and not line.startswith('#'):
-            key, value = line.strip().split("=", 1)
-            prop_dict[key] = value
-            trie.insert(key.split("."), value)
-
-
-yml = trie.trie_to_yml()
-print(yml)
+def convert_properties_to_yml_file(in_file_path, out_file_path):
+    """ Converts properties file to yml file """
+    trie = PropertiesTrie()
+    with open(in_file_path, 'r') as file:
+        for line in file:
+            if line.strip() and not line.startswith('#'):
+                key, value = line.strip().split("=", 1)
+                trie.insert(key.split("."), value)
+    with open(out_file_path, 'w') as file:
+        file.write(trie.to_yml())
 
 
-class TestTrie(unittest.TestCase):
+prop_pref = './python/resources/properties/'
+yml_pref = './python/resources/yml/'
+convert_properties_to_yml_file(prop_pref + 'application_1.properties', yml_pref + "test.yml")
+
+
+class TestPropertiesTrie(unittest.TestCase):
     insert_words = ["abc", "abgl", "cdf", "abcd", "lmn", "abcdefghijklmn"]
     error_true = "Should be True."
     error_false = "Should be False."
