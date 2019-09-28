@@ -40,8 +40,16 @@ class PropertiesTrie(object):
         return helper(start_node=self.root, start_key=None) + "\n\n"
 
 
-def convert_properties_to_yml_file(in_file_path, out_file_path):
-    """ Converts properties file to yml file """
+def convert_properties_to_yml(in_file_path, out_file_path=None, remove_source=False):
+    """ Converts properties file to yml file
+    :param in_file_path: the path to the file.properties source
+    :param out_file_path: the path to the output yml file
+    :param remove_source: whether to remove the properties file source after converting
+    """
+    if not out_file_path:
+        out_file_path = os.getcwd() + "/" + os.path.splitext(in_file_path)[0] + ".yml"
+    print('Converting: source="{}", destination="{}"'.format(in_file_path, out_file_path))
+
     trie = PropertiesTrie()
     with open(in_file_path, 'r') as file:
         for line in file:
@@ -51,18 +59,24 @@ def convert_properties_to_yml_file(in_file_path, out_file_path):
     with open(out_file_path, 'w') as file:
         file.write(trie.to_yml())
 
+    if remove_source:
+        os.remove(in_file_path)
+
 
 if __name__ == "__main__":
     import os
+    import glob
     import argparse
 
     parser = argparse.ArgumentParser(description=".properties to .yml")
     parser.add_argument("prop_path", help="Path to the properties file.", type=str)
     parser.add_argument("yml_path", nargs='?', help="Path to the yml file.", type=str, default=None)
+    parser.add_argument("-rm", help="Whether to remove the source file.", action='store_true')
     args = parser.parse_args()
-
-    yml_path = args.yml_path
-    if not yml_path:
-        yml_path = os.getcwd() + "/" + os.path.splitext(args.prop_path)[0] + ".yml"
-    print('Converting: source="{}", destination="{}"'.format(args.prop_path, yml_path))
-    convert_properties_to_yml_file(in_file_path=args.prop_path, out_file_path=yml_path)
+    # print(args)
+    if not args.yml_path and os.path.isdir(args.prop_path):
+        os.chdir(args.prop_path)
+        for prop_file in glob.glob("**/*.properties", recursive=True):
+            convert_properties_to_yml(prop_file, remove_source=args.rm)
+    else:
+        convert_properties_to_yml(in_file_path=args.prop_path, out_file_path=args.yml_path, remove_source=args.rm)
