@@ -15,8 +15,12 @@ Converting files by hand is boring. This tool helps to to migrate from `.propert
 
     `python prop2yml.py <source_file_path.properties> <destination_path.yml>`
 
-    If the destination path is not specified the converted file will be saved in the current working directory with name: `<source_file_name>.yml`. 
-2. `.yml` to `.prop`: (COMING SOON)  
+    If the destination path is not specified the converted file will be saved in the current working directory with name: `<source_file_name>.yml`.
+    
+    If the source path is a directory(e.g. `python prop2yml.py /path/to/prop/`) all `.properties` files from the subdirectories will be converted recursively.
+    
+    By default all source files will be kept. To remove the source files use the `-rm` options.
+2. `.yml` to `.prop`: (COMING SOON) 
     To convert `.yml` file to `.properties` file run:
 
     `python yml2prop.py <source_file_path.yml> <destination_path.properties>`
