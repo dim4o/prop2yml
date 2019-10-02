@@ -12,16 +12,12 @@ class PropertiesTrie(object):
         :param prop_key: List
         :param prop_value: str
         """
-        word_len = len(prop_key)
         curr_node = self.root
-        for i in range(word_len):
-            if prop_key[i] not in curr_node.children:
-                curr_node.children[prop_key[i]] = self._PropertiesNode()
-
-            curr_node = curr_node.children[prop_key[i]]
-
-            if i == word_len - 1:
-                curr_node.value = prop_value
+        for char in prop_key:
+            if char not in curr_node.children:
+                curr_node.children[char] = self._PropertiesNode()
+            curr_node = curr_node.children[char]
+        curr_node.value = prop_value
 
     def to_yml(self):
         """ Converts the properties tree to yml format
